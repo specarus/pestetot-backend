@@ -80,21 +80,17 @@ const login = async (req, res) => {
   if (user) {
     const match = await bcrypt.compare(password, user.password);
     if (match) {
-      jwt.sign(
-        { _id: user._id },
-        jwtSecret,
-        { expiresIn: "1d" },
-        (err, token) => {
-          if (err) throw err;
-          res
-            .cookie("token", token, {
-              sameSite: "none",
-              secure: true,
-              httpOnly: true,
-            })
-            .json(user);
-        }
-      );
+      jwt.sign({ _id: user._id }, jwtSecret, {}, (err, token) => {
+        if (err) throw err;
+        res
+          .cookie("token", token, {
+            sameSite: "none",
+            secure: true,
+            maxAge: 100000000000,
+            httpOnly: true,
+          })
+          .json(user);
+      });
     } else {
       res.json({ status: "error", error: "Parola incorecta!" });
     }
@@ -104,7 +100,9 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
-  res.clearCookie("token").json({ status: "ok" });
+  res
+    .cookie("token", null, { expires: new Date(Date.now()), httpOnly: true })
+    .json({ status: "ok" });
 };
 
 export { login, register, logout };

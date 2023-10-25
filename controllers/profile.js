@@ -10,11 +10,16 @@ const jwtSecret = process.env.JWT_SECRET;
 const getLoggedInUser = async (req, res) => {
   const { token } = req.cookies;
   if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      const user = await User.findOne({ _id: userData._id });
-      res.json(user);
-    });
+    jwt.verify(
+      token,
+      jwtSecret,
+      { expiresIn: "356d" },
+      async (err, userData) => {
+        if (err) throw err;
+        const user = await User.findOne({ _id: userData._id });
+        res.json(user);
+      }
+    );
   } else {
     res.json(null);
   }
@@ -25,7 +30,9 @@ const deleteLoggedInUser = async (req, res) => {
 
   if (id) {
     await User.deleteOne({ _id: id });
-    res.cookie("token", "", { maxAge: 1 }).json({ status: "ok" });
+    res
+      .cookie("token", null, { expires: new Date(Date.now()), httpOnly: true })
+      .json({ status: "ok" });
   }
 };
 
