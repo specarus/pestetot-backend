@@ -85,8 +85,8 @@ const login = async (req, res) => {
         res
           .cookie("token", token, {
             sameSite: "none",
-            secure: true,
             maxAge: 100000000000,
+            secure: true,
             httpOnly: true,
           })
           .json(user);
@@ -100,9 +100,7 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
-  res
-    .cookie("token", null, { expires: new Date(Date.now()), httpOnly: true })
-    .json({ status: "ok" });
+  res.cookie("token", "", { maxAge: 1 }).json({ status: "ok" });
 };
 
 export { login, register, logout };
