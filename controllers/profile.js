@@ -24,8 +24,12 @@ const deleteLoggedInUser = async (req, res) => {
   const { id } = req.params;
 
   if (id) {
-    await User.deleteOne({ _id: id });
-    res.cookie("token", "").json({ status: "ok" });
+    try {
+      await User.deleteOne({ _id: id });
+      res.cookie("token", "").json({ status: "ok" });
+    } catch (error) {
+      res.json({ status: "error" });
+    }
   }
 };
 
