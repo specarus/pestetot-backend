@@ -104,11 +104,7 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
-  try {
-    res.cookie("token", "").json({ status: "ok" });
-  } catch (error) {
-    res.json({ status: "error" });
-  }
+  res.cookie("token", "").json({ status: "ok" });
 };
 
 export { login, register, logout };
