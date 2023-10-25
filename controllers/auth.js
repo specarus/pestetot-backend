@@ -104,7 +104,7 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
-  res.cookie("token", "", { maxAge: 1 }).json({ status: "ok" });
+  res.clearCookie("token").json({ status: "ok" });
 };
 
 export { login, register, logout };

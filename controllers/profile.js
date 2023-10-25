@@ -25,7 +25,7 @@ const deleteLoggedInUser = async (req, res) => {
 
   if (id) {
     await User.deleteOne({ _id: id });
-    res.cookie("token", "").json({ status: "ok" });
+    res.cookie("token", "", { maxAge: 1 }).json({ status: "ok" });
   }
 };
 

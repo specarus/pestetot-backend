@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 
-const updateUser = async (req, res) => {
+const getUsers = async (req, res) => {
   const users = await User.find();
   res.json(users);
 };
@@ -11,4 +11,4 @@ const deleteUser = async (req, res) => {
   res.json({ status: "ok" });
 };
 
-export { updateUser, deleteUser };
+export { getUsers, deleteUser };
