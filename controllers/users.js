@@ -5,10 +5,16 @@ const getUsers = async (req, res) => {
   res.json(users);
 };
 
+const getSingleUser = async (req, res) => {
+  const email = req.params.email;
+  const user = await User.findOne({ email });
+  res.json(user);
+};
+
 const deleteUser = async (req, res) => {
   const id = req.params.id;
   await User.deleteOne({ _id: id });
   res.json({ status: "ok" });
 };
 
-export { getUsers, deleteUser };
+export { getUsers, deleteUser, getSingleUser };

@@ -3,7 +3,6 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import jwt from "jsonwebtoken";
 
 // Models
 import User from "./models/User.js";
@@ -39,66 +38,35 @@ app.use("/api/users", userRoutes);
 app.use("/profile", profileRoutes);
 app.use("/api/products", productRoutes);
 
-// Authentication
-
-// JWT secret
-const jwtSecret = process.env.JWT_SECRET;
-
 // Personal information
-app.put("/api/personal", (req, res) => {
-  const { token } = req.cookies;
-  const { username, email, firstName, lastName, phoneNumber } = req.body;
-
-  if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      await User.updateOne(
-        { _id: userData._id },
-        {
-          username,
-          email,
-          firstName,
-          lastName,
-          phoneNumber,
-        }
-      );
-      res.json({ status: "ok" });
-    });
-  } else {
-    res.json(null);
-  }
+app.put("/api/personal", async (req, res) => {
+  const { _id, username, email, firstName, lastName, phoneNumber } = req.body;
+  await User.updateOne(
+    { _id: _id },
+    {
+      username,
+      email,
+      firstName,
+      lastName,
+      phoneNumber,
+    }
+  );
+  res.json({ status: "ok" });
 });
 
 // Address
-app.put("/api/address", (req, res) => {
-  const { token } = req.cookies;
-  const { address } = req.body;
-
-  if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      await User.updateOne({ _id: userData._id }, { address });
-      res.json({ status: "ok" });
-    });
-  } else {
-    res.json(null);
-  }
+app.put("/api/address", async (req, res) => {
+  const { _id, address } = req.body;
+  await User.updateOne({ _id: _id }, { address });
+  res.json({ status: "ok" });
 });
 
 // Update cart
-app.put("/api/cart", async (req, res) => {
+app.put("/api/cart/:email", async (req, res) => {
   const cart = req.body;
-  const { token } = req.cookies;
-
-  if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      await User.updateOne({ _id: userData._id }, { cart });
-      res.json({ status: "ok" });
-    });
-  } else {
-    res.json(null);
-  }
+  const email = req.params.email;
+  await User.updateOne({ email: email }, { cart });
+  res.json({ status: "ok" });
 });
 
 // Mongoose setup

@@ -1,13 +1,9 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
 dotenv.config();
-
-// JWT secret
-const jwtSecret = process.env.JWT_SECRET;
 
 const register = async (req, res) => {
   const { username, email, password, confirmPassword } = req.body;
@@ -66,49 +62,4 @@ const register = async (req, res) => {
     });
 };
 
-const login = async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.json({
-      status: "error",
-      error: "Nu ati completat toate campurile!",
-    });
-  }
-
-  const user = await User.findOne({ email });
-  if (user) {
-    const match = await bcrypt.compare(password, user.password);
-    if (match) {
-      jwt.sign(
-        { _id: user._id },
-        jwtSecret,
-        { expiresIn: "356d" },
-        (err, token) => {
-          if (err) throw err;
-          res
-            .cookie("token", token, {
-              sameSite: "none",
-              secure: true,
-              httpOnly: true,
-            })
-            .json(user);
-        }
-      );
-    } else {
-      res.json({ status: "error", error: "Parola incorecta!" });
-    }
-  } else {
-    res.json({ status: "error", error: "Utilizatorul nu exista!" });
-  }
-};
-
-const logout = (req, res) => {
-  try {
-    res.cookie("token", "").json({ status: "ok" });
-  } catch (error) {
-    res.json({ status: "error" });
-  }
-};
-
-export { login, register, logout };
+export { register };
